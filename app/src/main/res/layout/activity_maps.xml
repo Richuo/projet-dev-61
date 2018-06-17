@@ -40,12 +40,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:visibility="gone"
         android:background="#60FD7D01"/>
     <FrameLayout
         android:id="@+id/sunset_tint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:visibility="gone"
         android:background="#1A000000"/>
 
     <FrameLayout

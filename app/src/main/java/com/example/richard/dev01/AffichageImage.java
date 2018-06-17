@@ -15,24 +15,41 @@ public class AffichageImage extends AppCompatActivity {
     private float mScaleFactor = 1.0f;
     private ImageView mImageView;
 
+    private ImageView horaires_mairie; //999
+    private ImageView horaires_fort; //998
+
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_affichage);
+
+        horaires_mairie = findViewById(R.id.imageView_mairie);
+
+        horaires_fort = findViewById(R.id.imageView_fort);
+
 
         /// Change le layout en fonction de la carte demandée ///
-        if (MapsActivity.id_batiment == 3) {
-            setContentView(R.layout.activity_plan);
+
+        //Vers la mairie
+        if (MapsActivity.id_batiment == 999) {
+            horaires_mairie.setVisibility(View.VISIBLE);
+            mImageView = horaires_mairie;
         }
 
-        else if (MapsActivity.id_batiment == 1) {
-            setContentView(R.layout.activity_plani1);
+        //Vers le Fort
+        else if (MapsActivity.id_batiment == 998) {
+            horaires_fort.setVisibility(View.VISIBLE);
+            mImageView = horaires_fort;
         }
 
-        mImageView= findViewById(R.id.imageView);
+
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+
     }
 
     public boolean onTouchEvent(MotionEvent motionEvent) {

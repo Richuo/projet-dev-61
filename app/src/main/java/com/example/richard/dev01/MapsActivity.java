@@ -190,6 +190,9 @@ public class MapsActivity extends FragmentActivity
     @BindView(R.id.sunrise_tint)
     FrameLayout sunrise_filter;
 
+    @BindView(R.id.sunset_tint)
+    FrameLayout sunset_filter;
+
 
 
 
@@ -482,7 +485,6 @@ public class MapsActivity extends FragmentActivity
                     Log.e(TAG, "Style parsing failed.");
                 }
 
-                sunrise_filter.setVisibility(View.INVISIBLE);
                 System.out.println("NIGHT");
             }
 
@@ -505,12 +507,12 @@ public class MapsActivity extends FragmentActivity
                         && (sum_current < sum_max_sunset))
                          ) {
                     sunrise_filter.setVisibility(View.VISIBLE);
+                    sunset_filter.setVisibility(View.VISIBLE);
                     System.out.println("SUNRISE OR SUNSET");
                 }
 
                 //Met le filtre "DAY" avec le filtre sunset/sunrise
                 else {
-                    sunrise_filter.setVisibility(View.INVISIBLE);
                     System.out.println("DAY");
                 }
             }
@@ -686,7 +688,6 @@ public class MapsActivity extends FragmentActivity
             {
 
                 System.out.println("MAP READY");
-                ActivityLoadingScreen.mapready = true;
 
                 FrameLayout layout = (FrameLayout)findViewById(R.id.frame_map);
                 layout.setVisibility(View.GONE);
@@ -738,9 +739,12 @@ public class MapsActivity extends FragmentActivity
 
 
     private void show_bottom_sheet_poly(Polygon polygon){
+        plan_inte.setTextColor(Color.parseColor("#FFFFFF"));
+        plan_inte.setBackgroundColor(Color.parseColor("#000000"));
         if (polygon.getTag() == "I3"){ //click sur le bat I3
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newcameraposition(posi3,18)));
             id_batiment = 3;
+            //REDONDANCE DES DEUX CONDITIONS POUR METTRE BIEN A JOUR LA FENETRE D'INFO
             if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                 //INFO
                 plan_inte.setVisibility(View.GONE);
@@ -774,9 +778,10 @@ public class MapsActivity extends FragmentActivity
             if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                 //INFO
                 plan_inte.setVisibility(View.VISIBLE);
+                plan_inte.setText("Plan intérieur");
                 bat_name_text.setText("Bâtiment B03");
                 heure_ouvert.setVisibility(View.VISIBLE);
-                heure_ouvert.setText("Heures ouverture/fermture : 7h00 - 23h00");
+                heure_ouvert.setText("Heures ouverture/fermeture : 7h00 - 23h00");
                 info_supp.setVisibility(View.GONE);
                 info1.setVisibility(View.GONE);
                 info2.setVisibility(View.GONE);
@@ -788,9 +793,10 @@ public class MapsActivity extends FragmentActivity
                 sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 //INFO
                 plan_inte.setVisibility(View.VISIBLE);
+                plan_inte.setText("Plan intérieur");
                 bat_name_text.setText("Bâtiment B03");
                 heure_ouvert.setVisibility(View.VISIBLE);
-                heure_ouvert.setText("Heures ouverture/fermture : 7h00 - 23h00");
+                heure_ouvert.setText("Heures ouverture/fermeture : 7h00 - 23h00");
                 info_supp.setVisibility(View.GONE);
                 info1.setVisibility(View.GONE);
                 info2.setVisibility(View.GONE);
@@ -805,15 +811,116 @@ public class MapsActivity extends FragmentActivity
 
     private void show_bottom_sheet_ground(GroundOverlay groundOverlay) {
 
+        int currentDate = calendar.get(Calendar.DAY_OF_WEEK);
+        System.out.println("DAY OF THE WEEK = " + currentDate);
+
+        plan_inte.setVisibility(View.VISIBLE);
+        plan_inte.setTextColor(Color.parseColor("#FFFFFF"));
+        plan_inte.setBackgroundColor(Color.parseColor("#42AAEF"));
+        plan_inte.setText("Horaires de bus");
+
         if (groundOverlay.getTag() == "Bus vers mairie") {
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newcameraposition(posBus1,18)));
             System.out.println("MAIRIE BUS");
+            id_batiment = 999;
+
+            if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                //INFO
+                bat_name_text.setText("Bus vers Mairie de Plouzané");
+                heure_ouvert.setVisibility(View.VISIBLE);
+                if (currentDate == 1){
+                    heure_ouvert.setText("Premier Bus à 9h10 / Dernier bus à 00h42");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("Attention : Horaires du dimanche et des jours fériés");
+                    info2.setVisibility(View.GONE);
+                }
+                else {
+                    heure_ouvert.setText("Premier Bus à 6h16 / Dernier bus à 00h42");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("(Attention aux horaires des jours fériés)");
+                    info2.setVisibility(View.GONE);
+                }
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+
+            }
+            else {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                //INFO
+                bat_name_text.setText("Bus vers Mairie de Plouzané");
+                heure_ouvert.setVisibility(View.VISIBLE);
+                if (currentDate == 1){
+                    heure_ouvert.setText("Premier Bus à 9h10 / Dernier bus à 00h42");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("Attention : Horaires du dimanche et des jours fériés");
+                    info2.setVisibility(View.GONE);
+                }
+                else {
+                    heure_ouvert.setText("Premier Bus à 6h16 / Dernier bus à 00h42");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("(Attention aux horaires des jours fériés)");
+                    info2.setVisibility(View.GONE);
+                }
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
 
         }
 
         else if (groundOverlay.getTag() == "Bus vers Brest") {
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newcameraposition(posBus2,18)));
             System.out.println("BREST BUS");
+            id_batiment = 998;
+            if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                //INFO
+                plan_inte.setVisibility(View.VISIBLE);
+                plan_inte.setText("Horaires de bus");
+                bat_name_text.setText("Bus vers Fort Montbarey (Brest)");
+                heure_ouvert.setVisibility(View.VISIBLE);
+                if (currentDate == 1){
+                    heure_ouvert.setText("Premier Bus à 9h24 / Dernier bus à 23h57");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("Attention : Horaires du dimanche et des jours fériés");
+                    info2.setVisibility(View.GONE);
+                }
+                else {
+                    heure_ouvert.setText("Premier Bus à 5h52 / Dernier bus à 23h56");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("(Attention aux horaires des jours fériés)");
+                    info2.setVisibility(View.GONE);
+                }
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+
+            }
+            else {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                //INFO
+                plan_inte.setVisibility(View.VISIBLE);
+                plan_inte.setText("Horaires de bus");
+                bat_name_text.setText("Bus vers Fort Montbarey (Brest)");
+                heure_ouvert.setVisibility(View.VISIBLE);
+                if (currentDate == 1){
+                    heure_ouvert.setText("Premier Bus à 9h24 / Dernier bus à 23h57");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("Attention : Horaires du dimanche et des jours fériés");
+                    info2.setVisibility(View.GONE);
+                }
+                else {
+                    heure_ouvert.setText("Premier Bus à 5h52 / Dernier bus à 23h56");
+                    info_supp.setVisibility(View.VISIBLE);
+                    info1.setVisibility(View.VISIBLE);
+                    info1.setText("(Attention aux horaires des jours fériés)");
+                    info2.setVisibility(View.GONE);
+                }
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
 
         }
 
@@ -827,6 +934,14 @@ public class MapsActivity extends FragmentActivity
     public void change_activity() {
         if (id_batiment == 15){ //click sur le bat B03
             startActivity(new Intent(MapsActivity.this, MapsInteriorActivity.class));
+        }
+
+        else if (id_batiment == 999){
+            startActivity(new Intent(MapsActivity.this, AffichageImage.class));
+        }
+
+        else if (id_batiment == 998){
+            startActivity(new Intent(MapsActivity.this, AffichageImage.class));
         }
 
     }
