@@ -7,30 +7,16 @@
     tools:context="com.example.richard.dev01.AffichageImage">
 
 
-
     <ImageView
-        android:id="@+id/imageView_fort"
+        android:id="@+id/imageView"
         android:layout_width="362dp"
         android:layout_height="330dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/horaire_fort_monba_techno_2_2"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <ImageView
-        android:id="@+id/imageView_mairie"
-        android:layout_width="362dp"
-        android:layout_height="330dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/horaire_mairie_plouz_techno_1_2"/>
 
 
 </android.support.constraint.ConstraintLayout>

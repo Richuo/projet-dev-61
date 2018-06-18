@@ -2,11 +2,11 @@ package com.example.richard.dev01;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.view.ScaleGestureDetector;
 import android.view.MotionEvent;
 
+import com.bumptech.glide.Glide;
 
 
 public class AffichageImage extends AppCompatActivity {
@@ -15,8 +15,8 @@ public class AffichageImage extends AppCompatActivity {
     private float mScaleFactor = 1.0f;
     private ImageView mImageView;
 
-    private ImageView horaires_mairie; //999
-    private ImageView horaires_fort; //998
+    private int res_chosen;
+
 
 
 
@@ -28,24 +28,29 @@ public class AffichageImage extends AppCompatActivity {
 
         setContentView(R.layout.activity_affichage);
 
-        horaires_mairie = findViewById(R.id.imageView_mairie);
 
-        horaires_fort = findViewById(R.id.imageView_fort);
-
-
-        /// Change le layout en fonction de la carte demandée ///
+        /// Change la ressource en fonction de l'image demandée ///
 
         //Vers la mairie
         if (MapsActivity.id_batiment == 999) {
-            horaires_mairie.setVisibility(View.VISIBLE);
-            mImageView = horaires_mairie;
+            res_chosen = R.drawable.horaire_mairie_plouz_techno_1_2;
         }
 
         //Vers le Fort
         else if (MapsActivity.id_batiment == 998) {
-            horaires_fort.setVisibility(View.VISIBLE);
-            mImageView = horaires_fort;
+            res_chosen = R.drawable.horaire_fort_monba_techno_2_2;
+
+
         }
+
+        mImageView = findViewById(R.id.imageView);
+
+        Glide.with(this)
+                .load(res_chosen) // Uri of the picture
+                .into(mImageView);
+
+
+
 
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
@@ -68,4 +73,5 @@ public class AffichageImage extends AppCompatActivity {
             return true;
         }
     }
+
 }
