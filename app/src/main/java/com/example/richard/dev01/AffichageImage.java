@@ -17,11 +17,6 @@ public class AffichageImage extends AppCompatActivity {
 
     private int res_chosen;
 
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,6 +5,8 @@ import android.animation.Animator;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.nfc.Tag;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -39,12 +41,23 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 import android.location.Location;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.Step;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
@@ -71,6 +84,7 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 
 
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -111,6 +125,7 @@ public class MapsActivity extends FragmentActivity
         OnMyLocationClickListener,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnGroundOverlayClickListener,
+        LocationListener,
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback,
         AdapterView.OnItemSelectedListener{
@@ -148,7 +163,18 @@ public class MapsActivity extends FragmentActivity
 
     //Polygones des batiments//
     private Polygon polygonei1;
+    private Polygon polygonei2;
     private Polygon polygonei3;
+    private Polygon polygonei4;
+    private Polygon polygonei5;
+    private Polygon polygonei6;
+    private Polygon polygonei7;
+    private Polygon polygonei8;
+    private Polygon polygonei9;
+    private Polygon polygonei10;
+    private Polygon polygonei11;
+    private Polygon polygonei12;
+
     private Polygon polygoneB03;
 
     private LatLng posi1;
@@ -186,6 +212,7 @@ public class MapsActivity extends FragmentActivity
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
+    private LatLng current_pos;
     private boolean mLocationPermissionGranted;
 
     // The entry point to the Fused Location Provider.
@@ -407,6 +434,16 @@ public class MapsActivity extends FragmentActivity
 
 
 
+
+
+
+
+
+
+
+
+
+
         ///STYLE DE LA MAP/// (En fonction de l'heure)
 
 
@@ -618,15 +655,25 @@ public class MapsActivity extends FragmentActivity
 
         mBus2.setTag("Bus vers Brest");
 
+        //AUTRE ICONE
+
+//        mSurp = mMap.addGroundOverlay(new GroundOverlayOptions()
+//                .image(BitmapDescriptorFactory.fromResource(R.mipmap.bus_logo1))
+//                .bearing(-24)
+//                .clickable(true)
+//                .zIndex(2) //Position z
+//                .position(posSurp, 18f, 18f));
+//
+//        mSurp.setTag("Bus vers Brest");
+
 
 
         //////
         //////FORME DES BATIMENTS//////
-                                 //////
+                                 /////////////////////////////////////////////////////////////////////////////////
 
 
         //polygonI1////////////////////////////////////////////////////////
-
         PolygonOptions rectOptionsI1 = new PolygonOptions()
                 .add(new LatLng(48.357696, -4.571037))
                 .add(new LatLng(48.357734, -4.570897))
@@ -648,7 +695,6 @@ public class MapsActivity extends FragmentActivity
 
 
         //polygonI3////////////////////////////////////////////////////////
-
         PolygonOptions rectOptionsI3 = new PolygonOptions()
                 .add(new LatLng(48.358136, -4.571402))
                 .add(new LatLng(48.358184, -4.571225))
@@ -670,8 +716,8 @@ public class MapsActivity extends FragmentActivity
         polygonei3.setTag("I3"); //permet de différencier les polygones
 
 
-        //polygonB03///////////////////////////////////////////////////////
 
+        //polygonB03///////////////////////////////////////////////////////
         PolygonOptions rectOptionsB03 = new PolygonOptions()
                 .add(new LatLng(48.358468, -4.570853))
                 .add(new LatLng(48.358533, -4.570646))
@@ -690,6 +736,180 @@ public class MapsActivity extends FragmentActivity
         // Ajout du polygone sur la carte
         polygoneB03 = mMap.addPolygon(rectOptionsB03);
         polygoneB03.setTag("B03"); //permet de différencier les polygones
+
+
+
+        //polygonI2////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI2 = new PolygonOptions()
+                .add(new LatLng(48.358080, -4.570637))
+                .add(new LatLng(48.358119, -4.570488))
+                .add(new LatLng(48.357888, -4.570335))
+                .add(new LatLng(48.357807, -4.570597))
+                .add(new LatLng(48.357912, -4.570662))
+                .add(new LatLng(48.357941, -4.570550))
+                .add(new LatLng(48.358080, -4.570637))  // Closes the polyline.
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I2 sur la carte
+        polygonei2 = mMap.addPolygon(rectOptionsI2);
+        polygonei2.setTag("I2"); //permet de différencier les polygones
+
+
+
+        //polygonI4////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI4 = new PolygonOptions()
+                .add(new LatLng(48.357216, -4.570153))
+                .add(new LatLng(48.357266, -4.569967))
+                .add(new LatLng(48.357080, -4.569839))
+                .add(new LatLng(48.357019, -4.570045))
+                .add(new LatLng(48.356931, -4.570353))
+                .add(new LatLng(48.357039, -4.570422))
+                .add(new LatLng(48.357114, -4.570140))
+                .add(new LatLng(48.357124, -4.570089))
+                .add(new LatLng(48.357216, -4.570153))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I4 sur la carte
+        polygonei4 = mMap.addPolygon(rectOptionsI4);
+        polygonei4.setTag("I4"); //permet de différencier les polygones
+
+
+
+        //polygonI5////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI5 = new PolygonOptions()
+                .add(new LatLng(48.357196, -4.570428))
+                .add(new LatLng(48.357241, -4.570264))
+                .add(new LatLng(48.357484, -4.570418))
+                .add(new LatLng(48.357405, -4.570700))
+                .add(new LatLng(48.357302, -4.570635))
+                .add(new LatLng(48.357333, -4.570516))
+                .add(new LatLng(48.357196, -4.570428))
+
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I5 sur la carte/////a refaire
+        polygonei5 = mMap.addPolygon(rectOptionsI5);
+        polygonei5.setTag("I5"); //permet de différencier les polygones
+
+
+
+        //polygonI6////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI6 = new PolygonOptions()
+                .add(new LatLng(48.358033, -4.571724))
+                .add(new LatLng(48.357978, -4.571894))
+                .add(new LatLng(48.357631, -4.571638))
+                .add(new LatLng(48.357684, -4.571448))
+                .add(new LatLng(48.357756, -4.571448))
+                .add(new LatLng(48.357732, -4.571513))
+                .add(new LatLng(48.358033, -4.571724))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+
+        // Ajout du polygone I6 sur la carte
+        polygonei6 = mMap.addPolygon(rectOptionsI6);
+        polygonei6.setTag("I6"); //permet de différencier les polygones
+
+
+
+        //polygonI7////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI7 = new PolygonOptions()
+                .add(new LatLng(48.357597, -4.570410))
+                .add(new LatLng(48.357642, -4.570266))
+                .add(new LatLng(48.357580, -4.570224))
+                .add(new LatLng(48.357642, -4.570015))
+                .add(new LatLng(48.357569, -4.569937))
+                .add(new LatLng(48.357539, -4.569947))
+                .add(new LatLng(48.357436, -4.570301))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I7 sur la carte
+        polygonei7 = mMap.addPolygon(rectOptionsI7);
+        polygonei7.setTag("I7"); //permet de différencier les polygones
+
+
+
+        //polygonI8////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI8 = new PolygonOptions()
+                .add(new LatLng(48.356665, -4.570722))
+                .add(new LatLng(48.356703, -4.570576))
+                .add(new LatLng(48.356603, -4.570510))
+                .add(new LatLng(48.356617, -4.570461))
+                .add(new LatLng(48.356599, -4.570447))
+                .add(new LatLng(48.356676, -4.570181))
+                .add(new LatLng(48.356583, -4.570119))
+                .add(new LatLng(48.356454, -4.570588))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I8 sur la carte
+        polygonei8 = mMap.addPolygon(rectOptionsI8);
+        polygonei8.setTag("I8"); //permet de différencier les polygones
+
+
+
+        //polygonI9////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI9 = new PolygonOptions()
+                .add(new LatLng(48.356851, -4.570088))
+                .add(new LatLng(48.356976, -4.569591))
+                .add(new LatLng(48.356820, -4.569492))
+                .add(new LatLng(48.356759, -4.569488))
+                .add(new LatLng(48.356708, -4.569688))
+                .add(new LatLng(48.356824, -4.569757))
+                .add(new LatLng(48.356787, -4.569908))
+                .add(new LatLng(48.356772, -4.569899))
+                .add(new LatLng(48.356739, -4.570026))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+
+        // Ajout du polygone I9 sur la carte
+        polygonei9 = mMap.addPolygon(rectOptionsI9);
+        polygonei9.setTag("I9"); //permet de différencier les polygones
+
+
+
+        //polygonI10////////////////////////////////////////////////////////
+        PolygonOptions rectOptionsI10 = new PolygonOptions()
+                .add(new LatLng(48.357673, -4.572634))
+                .add(new LatLng(48.357604, -4.572891))
+                .add(new LatLng(48.357808, -4.573029))
+                .add(new LatLng(48.357856, -4.572846))
+                .add(new LatLng(48.357763, -4.572787))
+                .add(new LatLng(48.357783, -4.572704))
+                .clickable(true)
+                .zIndex(0) //Position z
+                .fillColor(Color.GRAY)
+                .strokeWidth(2f);
+
+        polygonei10= mMap.addPolygon(rectOptionsI10);
+        polygonei10.setTag("I10"); //permet de différencier les polygones
+
+
 
 
 
@@ -905,6 +1125,7 @@ public class MapsActivity extends FragmentActivity
         plan_inte.setText("Horaires de bus");
 
         if (groundOverlay.getTag() == "Bus vers mairie") {
+            DrawItinerary(posBus1);
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newcameraposition(posBus1,18)));
             System.out.println("MAIRIE BUS");
             id_batiment = 999;
@@ -1012,6 +1233,12 @@ public class MapsActivity extends FragmentActivity
 
 
     }
+
+
+
+
+
+
 
 
 
@@ -1145,6 +1372,49 @@ public class MapsActivity extends FragmentActivity
     ////////////////////////////////////////////////////////
 
 
+    /*** ITINERARY ***/
+    private void DrawItinerary(LatLng dest) {
+
+        if ((mLocationPermissionsGranted) & (current_pos != null)) {
+
+            GoogleDirection.withServerKey("AIzaSyBWB_3Uekwk-ktivQ5Q-VHXjqZahEys7a0") //Clé API Google Direction
+                    .from(current_pos)
+                    .to(dest)
+                    .transitMode(TransportMode.WALKING)
+                    .execute(new DirectionCallback() {
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                            if (direction.isOK()) {
+
+                                List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
+                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(getApplicationContext(), stepList, 3, Color.BLUE, 3, Color.BLUE);
+                                for (PolylineOptions polylineOption : polylineOptionList) {
+                                    mMap.addPolyline(polylineOption);
+                                }
+
+                                System.out.println("Direction OK");
+
+
+                            } else {
+                                System.out.println("Direction pas OK");
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+                            System.out.println("Direction pas du tout OK");
+                        }
+                    });
+        }
+
+        else {
+            System.out.println("NO CURRENT POSITION");
+        }
+    }
+
+
 
 
 
@@ -1181,10 +1451,12 @@ public class MapsActivity extends FragmentActivity
 
 
 
-
     /**
      * Gets the current location of the device, and positions the map's camera.
      */
+
+    private Location currentLocation;
+
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
 
@@ -1199,7 +1471,9 @@ public class MapsActivity extends FragmentActivity
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
-                            Location currentLocation = (Location) task.getResult();
+                            currentLocation = (Location) task.getResult();
+
+
 
 
                         }else{
@@ -1265,6 +1539,42 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onMyLocationClick(@NonNull Location location) {
     }
+
+
+    public LocationManager locationManager;
+
+
+
+    @Override
+    public void onLocationChanged(Location location){
+        //ITINERAIRE :
+
+
+
+        //remove location callback:
+        locationManager.removeUpdates(this);
+
+        double current_pos_y = location.getLatitude();
+        double current_pos_x = location.getLongitude();
+        current_pos = new LatLng(current_pos_y,current_pos_x);
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
 
 
 
